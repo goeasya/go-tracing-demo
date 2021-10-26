@@ -6,6 +6,7 @@ import (
 
 type Manager interface {
 	InitDataBase()
+	Close()
 	EventDao() EventInterface
 }
 

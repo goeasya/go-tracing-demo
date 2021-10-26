@@ -1,33 +1,10 @@
-package api
+package ginx
 
 import (
+	"github.com/gin-gonic/gin"
 	"go-tracing-demo/global"
 	"go-tracing-demo/pkg/httpx"
-
-	"github.com/gin-contrib/pprof"
-	"github.com/gin-gonic/gin"
-	"go.elastic.co/apm/module/apmgin"
 )
-
-
-func NewServer() *gin.Engine {
-	r := gin.Default()
-	pprof.Register(r)
-
-	// add elastic apm
-	r.Use(apmgin.Middleware(r))
-
-	apiR := r.Group("api")
-	{
-		eventR := apiR.Group("event")
-		{
-			eventR.POST("/create", CreateEvent)
-			eventR.GET("list", ListEvent)
-			eventR.GET("/findByEventId", FindEventByEventId)
-		}
-	}
-	return r
-}
 
 func CreateEvent(c *gin.Context) {
 	err := global.GetDBManager().EventDao().NewEvent(c.Request.Context(), "")
@@ -60,5 +37,3 @@ func FindEventByEventId(c *gin.Context) {
 	}
 	httpx.GinResponseSuccess(c, httpx.SuccessCode, &event)
 }
-
-

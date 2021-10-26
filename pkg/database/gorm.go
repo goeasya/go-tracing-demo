@@ -24,6 +24,14 @@ func NewGormDB(dbConnInfo string) (*DBManager, error) {
 	if err != nil {
 		return nil, err
 	}
+	sqlDB, err := db.DB()
+	if err != nil {
+		return nil, err
+	}
+
+	sqlDB.SetMaxOpenConns(100)
+	sqlDB.SetMaxIdleConns(10)
+	sqlDB.SetConnMaxLifetime(time.Hour)
 
 	return &DBManager{
 		DB:       db,
@@ -33,6 +41,10 @@ func NewGormDB(dbConnInfo string) (*DBManager, error) {
 
 type ModelInterface interface {
 	TableName() string
+}
+
+func (m *DBManager) Close() {
+
 }
 
 func (m *DBManager) InitDataBase() {
